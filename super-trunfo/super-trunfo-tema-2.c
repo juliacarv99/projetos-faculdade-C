@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <locale.h>
 #include <stdlib.h>
+#include <string.h>
 
 int main() {
     setlocale(LC_ALL, "Portuguese_Brazil");
@@ -13,6 +14,7 @@ int main() {
     float area, pib, area2, pib2;
     float densidade_populacional, densidade_populacional2;
     float pib_per_capita, pib_per_capita2, atributo1, atributo2;
+    int escolha;
    
 
     //entrada e saida de dados carta 1
@@ -90,32 +92,87 @@ int main() {
     printf("Estado: %s\n", estado2);
     printf("Código: %s\n", codigo2);
     printf("Nome da Cidade: %s\n", cidade2);
-    printf("População: %d\n", populacao2);
-    printf("Área %.2f km²: \n", area2);
+    printf("População: %d\n", populacao2); 
+    printf("Área: %.2f km²\n", area2); 
     printf("PIB: %.2f\n", pib2);
-    printf("Número de Pontos Turísticos: %d\n\n", pontos2);
+    printf("Número de Pontos Turísticos: %d\n", pontos2);
     printf("Densidade Populacional: %.2f hab/km²\n", densidade_populacional2);
     printf("PIB per Capita: %.2f\n\n", pib_per_capita2);
-
-    //declarção de atributo e declaração de valor
-    char n_atributo [50] = "população";
-    atributo1 = populacao;
-    atributo2 = populacao2;
-
-    //exibição das cartas e comparativo
-    printf("Comparação de cartas (Atributo: %s):", n_atributo);
-    printf("carta 1 - %s (%s): %d", cidade, estado, atributo1);
-    printf("carta 2 - %s (%s): %d", cidade2, estado2, atributo2);
-
-    if (atributo1 > atributo2)
-    {
-       printf("carta 1 (%s) venceu!", cidade);
-    }
-    else {
-        printf("carta 2 (%s) venceu!", cidade2);
-    }
     
+    // Menu interativo para escolher o atributo de comparação
+    printf("Escolha o atributo para comparar:\n");
+    printf("1 - População\n");
+    printf("2 - Área\n");
+    printf("3 - PIB\n");
+    printf("4 - Pontos Turísticos\n");
+    printf("5 - Densidade Populacional\n");
+    printf("6 - PIB per Capita\n");
+    printf("Opção: ");
+    scanf("%d", &escolha);
+
+    // Comparação de atributos
+    char n_atributo[50];
+
+    switch (escolha) {
+        case 1:
+            atributo1 = populacao;
+            atributo2 = populacao2;
+            strcpy(n_atributo, "População");
+            break;
+        case 2:
+            atributo1 = area;
+            atributo2 = area2;
+            strcpy(n_atributo, "Área");
+            break;
+        case 3:
+            atributo1 = pib;
+            atributo2 = pib2;
+            strcpy(n_atributo, "PIB");
+            break;
+        case 4:
+            atributo1 = pontos;
+            atributo2 = pontos2;
+            strcpy(n_atributo, "Pontos Turísticos");
+            break;
+        case 5:
+            atributo1 = densidade_populacional;
+            atributo2 = densidade_populacional2;
+            strcpy(n_atributo, "Densidade Populacional");
+            break;
+        case 6:
+            atributo1 = pib_per_capita;
+            atributo2 = pib_per_capita2;
+            strcpy(n_atributo, "PIB per Capita");
+            break;
+        default:
+            printf("Opção inválida!\n");
+            return 1;
+    }
+    // Exibição das cartas e comparativo
+    printf("\nComparação de cartas (Atributo: %s):\n", n_atributo);
+    printf("Carta 1 - %s (%s): %.2f\n", cidade, estado, atributo1);
+    printf("Carta 2 - %s (%s): %.2f\n", cidade2, estado2, atributo2);
+
+    // Lógica de comparação
+    if (escolha == 5) {
+        // Regra invertida para densidade populacional
+        if (atributo1 < atributo2) {
+            printf("Carta 1 (%s) venceu!\n", cidade);
+        } else if (atributo1 > atributo2) {
+            printf("Carta 2 (%s) venceu!\n", cidade2);
+        } else {
+            printf("Empate!\n");
+        }
+    } else {
+        // Regra normal para os outros atributos
+        if (atributo1 > atributo2) {
+            printf("Carta 1 (%s) venceu!\n", cidade);
+        } else if (atributo1 < atributo2) {
+            printf("Carta 2 (%s) venceu!\n", cidade2);
+        } else {
+            printf("Empate!\n");
+        }
+    }
 
     return 0;
-
 }
