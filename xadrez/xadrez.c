@@ -22,6 +22,26 @@ int main() {
             printf("Esquerda\n");
             k++;
         } while (k <= 8);
-    
-        return 0;
+            // Movimento do Cavalo: 2 para baixo e 1 para a esquerda (forma de "L")
+    printf("\nMovimento do Cavalo:\n");
+
+    const int casasBaixo = 2;
+    const int casasEsquerda = 1;
+
+    // Loop externo com for para as duas casas para baixo
+    for (int m = 1; m <= casasBaixo; m++) {
+        printf("Baixo\n");
+
+        // Loop interno do-while apenas para demonstrar o uso aninhado
+        // Aqui ele roda uma única vez quando m == casasBaixo
+        if (m == casasBaixo) {
+            int n = 0;
+            do {
+                printf("Esquerda\n");
+                n++;
+            } while (n < casasEsquerda);
+        }
+    }
+
+    return 0;
 }
