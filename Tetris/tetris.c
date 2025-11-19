@@ -2,102 +2,124 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define TAMANHO_FILA 5   // tamanho fixo da fila
+#define TAM_FILA 5
+#define TAM_PILHA 3
 
 typedef struct {
-    char nome;   // tipo da peça: 'I', 'O', 'T', 'L'
-    int id;      // identificador único
+    char nome;
+    int id;
 } Peca;
 
-Peca fila[TAMANHO_FILA];
-int inicio = 0;   // posição do primeiro elemento (dequeue)
-int fim = 0;      // posição onde a próxima peça será inserida (enqueue)
-int quantidade = 0; // quantidade de elementos na fila
-int contadorID = 0; // gera IDs únicos
+Peca fila[TAM_FILA];
+Peca pilha[TAM_PILHA];
 
-// ---------- FUNÇÃO PARA GERAR PEÇA NOVA ----------
+int inicio = 0;
+int fim = 0;
+int quantidade = 0;
+
+int topo = -1;
+int contadorID = 0;
+
 Peca gerarPeca() {
     char tipos[4] = {'I', 'O', 'T', 'L'};
-    Peca nova;
-    nova.nome = tipos[rand() % 4]; // escolhe um tipo aleatório
-    nova.id = contadorID++;        // gera ID único
-    return nova;
+    Peca p;
+    p.nome = tipos[rand() % 4];
+    p.id = contadorID++;
+    return p;
 }
-void enqueue() {
-    if (quantidade == TAMANHO_FILA) {
-        printf("\n❌ A fila está cheia! Não é possível inserir nova peça.\n");
-        return;
-    }
 
+void enqueueAuto() {
     fila[fim] = gerarPeca();
-    fim = (fim + 1) % TAMANHO_FILA;
-    quantidade++;
-
-    printf("\n✅ Nova peça inserida com sucesso!\n");
+    fim = (fim + 1) % TAM_FILA;
 }
 
-void dequeue() {
-    if (quantidade == 0) {
-        printf("\n❌ A fila está vazia! Nenhuma peça para jogar.\n");
-        return;
+void inicializarFila() {
+    for (int i = 0; i < TAM_FILA; i++) {
+        enqueueAuto();
+        quantidade++;
     }
-
-    Peca jogada = fila[inicio];
-    inicio = (inicio + 1) % TAMANHO_FILA;
-    quantidade--;
-
-    printf("\n🎮 Peça jogada: [%c %d]\n", jogada.nome, jogada.id);
 }
 
-void exibirFila() {
-    printf("\n===== Fila de peças =====\n");
-
-    if (quantidade == 0) {
-        printf("(vazia)\n");
-        return;
-    }
-
-    int i, idx;
+void exibirEstruturas() {
+    int i;
+    printf("\nFila: ");
     for (i = 0; i < quantidade; i++) {
-        idx = (inicio + i) % TAMANHO_FILA;
+        int idx = (inicio + i) % TAM_FILA;
         printf("[%c %d] ", fila[idx].nome, fila[idx].id);
     }
-    printf("\n==========================\n");
+
+    printf("\nPilha (Topo -> Base): ");
+    if (topo == -1)
+        printf("(vazia)");
+    else
+        for (i = topo; i >= 0; i--)
+            printf("[%c %d] ", pilha[i].nome, pilha[i].id);
+    
+    printf("\n");
+}
+
+void jogarPeca() {
+    if (quantidade == 0) {
+        printf("Fila vazia.\n");
+        return;
+    }
+
+    inicio = (inicio + 1) % TAM_FILA;
+    quantidade--;
+
+    enqueueAuto();
+    quantidade++;
+}
+
+void reservarPeca() {
+    if (quantidade == 0) {
+        printf("Fila vazia.\n");
+        return;
+    }
+    if (topo == TAM_PILHA - 1) {
+        printf("Pilha cheia.\n");
+        return;
+    }
+
+    pilha[++topo] = fila[inicio];
+    inicio = (inicio + 1) % TAM_FILA;
+    quantidade--;
+
+    enqueueAuto();
+    quantidade++;
+}
+
+void usarReservada() {
+    if (topo == -1) {
+        printf("Pilha vazia.\n");
+        return;
+    }
+
+    topo--;
 }
 
 int main() {
-    srand(time(NULL));
-
-    // Inicializa fila com 5 peças
-    printf("Inicializando fila com 5 peças...\n");
-    for (int i = 0; i < TAMANHO_FILA; i++) {
-        enqueue();
-    }
+    srand((unsigned int)time(NULL));
+    inicializarFila();
 
     int opcao;
 
     do {
-        exibirFila();
+        exibirEstruturas();
 
-        printf("\nOpções:\n");
-        printf("1 - Jogar peça (dequeue)\n");
-        printf("2 - Inserir nova peça (enqueue)\n");
+        printf("\n1 - Jogar peça\n");
+        printf("2 - Reservar peça\n");
+        printf("3 - Usar peça reservada\n");
         printf("0 - Sair\n");
-        printf("-> Escolha uma opção: ");
+        printf("Opção: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
-            case 1:
-                dequeue();
-                break;
-            case 2:
-                enqueue();
-                break;
-            case 0:
-                printf("\nEncerrando o programa...\n");
-                break;
-            default:
-                printf("\n❌ Opção inválida!\n");
+            case 1: jogarPeca(); break;
+            case 2: reservarPeca(); break;
+            case 3: usarReservada(); break;
+            case 0: break;
+            default: printf("Opção inválida.\n");
         }
 
     } while (opcao != 0);
